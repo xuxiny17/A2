@@ -1,7 +1,7 @@
 ---
 title: "Exploration of the Relationship Between Self Rated Mental Health and Family Income"
 author: "Xu Xinyi"
-date: "Due Date"
+date: "2020/10/18"
 output: pdf_document
 ---
 
@@ -16,7 +16,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Abstract
 
-Here is where you give a brief (one paragraph overview of your entire paper). This should include some background/introduction, some methodology, results and conclusions.
+The data was from Canadian General Social Survey data done in 2017, I chose to analyze the relation ship between family income and self rated mental health. 
+
+Here is where you give a brief (one paragraph overview of your entire paper). This should include some background/introduction, some methodology, results and conclusions. 
 
 ## Introduction
 
@@ -36,6 +38,9 @@ The data I chose is the GSS data set from 2017. The data set is very interesting
 However, for many variables, even at the first glace we could witness that there are lots of data that is NA, which that the analyze done on those variables could be biased as some extreme values or important sets of data could be missing which could be a serious drawback. Except for that, the remaining values are listed out clearly and are all capable for usage. 
 
 Introduce the data, explain why it was selected. Make sure to comment on important features and highlight any potential drawbacks to the data.
+
+## Methodology
+
 
 ## Model
 Data was cleaned up following the instruction of the gss_cleaning.R file.
@@ -62,7 +67,8 @@ income_mental <-
 
 income_mental <- na.omit(income_mental)
 income_mental$income_family <- as.factor(income_mental$income_family)
-income_mental$self_rated_mental_health <- as.factor(income_mental$self_rated_mental_health)
+income_mental$self_rated_mental_health <- as.factor(income_mental$
+                                                      self_rated_mental_health)
 str(income_mental)
 ```
 
@@ -70,20 +76,34 @@ str(income_mental)
 income_mental %>% 
   ggplot(aes(x = self_rated_mental_health)) +
   geom_bar() + xlab("Self rated mental health") + ylab("Numbers of people") + 
-  ggtitle("Plot on numbers of people who rate their who rate their mental health as different level")
+  ggtitle("Plot on numbers of people who rate their who rate their mental 
+          health as different level")
 
 income_mental %>% 
   ggplot(aes(x = income_family)) +
   geom_bar() + xlab("Income family") + ylab("Numbers of people") + 
-  ggtitle("Plot on numbers of people who has certain amount of family income")
+  ggtitle("Plot on numbers of people who has certain amount of family income") +
+  coord_flip()
 ```
 
-```{r linear regression model}
+```{r Linear Regression Model}
 mod <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health), data=income_mental)
 summary(mod)
 plot(mod)
 ```
-The model chosen was 
+```{r Graph Analysis, echo=TRUE, message=FALSE, warning=FALSE}
+attach(income_mental)
+plot(income_family, self_rated_mental_health, 
+     main = "Plot of Self rated mental health against Income family", 
+     xlab = "Self rated mental health", ylab = "Income family")
+
+plot(as.numeric(income_family), as.numeric(self_rated_mental_health), 
+     main = "Plot of Self rated mental health against Income family", 
+     xlab = "Self rated mental health", ylab = "Income family")
+abline(lm(income_family~self_rated_mental_health), col="red")
+```
+
+The model I choose was the simple linear regression model. 
 
 Introduce the selected model here. It is expected that you will use some mathematical notation here. If you do please ensure that all notation is explained. You may also want to discuss any special (hypothetical) cases of your model here, as well as any caveats.  
 
