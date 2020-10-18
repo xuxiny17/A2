@@ -1,6 +1,6 @@
 ---
-title: "Title of Your Report"
-author: "Names of your Group Members"
+title: "Exploration of the Relationship Between Self Rated Mental Health and Family Income"
+author: "Xu Xinyi"
 date: "Due Date"
 output: pdf_document
 ---
@@ -9,9 +9,9 @@ output: pdf_document
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Title of your Report
+## Exploration of the Relationship Between Self Rated Mental Health and Family Income
 
-# Name(s) of Author(s) 
+# Xu Xinyi
 # Date
 
 ## Abstract
@@ -20,13 +20,70 @@ Here is where you give a brief (one paragraph overview of your entire paper). Th
 
 ## Introduction
 
+The data set collected a lot of information from residents in Canada, and from all these variables, the income and mental health drew my attention as I have heard constantly from media that people tend to feel bad or even commit suicide while experiencing financial hard times. It is likely that financial difficulties could make an individual rather stressful. 
+
+Thus I would like to analyze the relationship between the family income and self rated mental health. I would use a linear regression model to fit as I expect that the more a family earns, the less likely a the individual would evaluate his/her metal health as poor.
+
+The result could be important, as if the hypothesis that an less a family earns the more likely an individual is experiencing an mental illness holds, this may allow researchers who study metal health to find their target faster and easier, as well as give government an idea on what proportion of the population they could offer more aid to. 
+
+
 Here is where you should give insight into the setting and introduce the goal of the analysis. Here you can introduce ideas and basic concepts regarding the study setting and the potential model. Again, this is the introduction, so you should be explaining the importance of the work that is ahead and hopefully build some suspense for the reader. You can also highlight what will be included in the subsequent sections.
 
 ## Data
 
+The data I chose is the GSS data set from 2017. The data set is very interesting as it listed 20602 observations and gathered information on the individual's income, self rated health, living conditions, religion affinity and lots of other variables. It involves a lot of interesting factors and information that drives my attention. Some variables like religion affinity, self rated mental health, religion importance and income soon caught my eyes, there are lot that we could dive into and do investigation upon. 
+
+However, for many variables, even at the first glace we could witness that there are lots of data that is NA, which that the analyze done on those variables could be biased as some extreme values or important sets of data could be missing which could be a serious drawback. Except for that, the remaining values are listed out clearly and are all capable for usage. 
+
 Introduce the data, explain why it was selected. Make sure to comment on important features and highlight any potential drawbacks to the data.
 
 ## Model
+Data was cleaned up following the instruction of the gss_cleaning.R file.
+```{r import data, echo=TRUE, message=FALSE, warning=FALSE}
+library(janitor)
+library(tidyverse)
+# install.packages("readr")
+library(readr)
+
+unprocessed <- read_csv("gss.csv")
+glimpse(unprocessed)
+```
+
+```{r clean and reform data}
+data_reformed <- 
+  unprocessed %>% 
+  select(income_family, self_rated_health, self_rated_mental_health)
+
+data_reformed <- na.omit(data_reformed)
+
+income_mental <- 
+  unprocessed %>% 
+  select(income_family, self_rated_mental_health)
+
+income_mental <- na.omit(income_mental)
+income_mental$income_family <- as.factor(income_mental$income_family)
+income_mental$self_rated_mental_health <- as.factor(income_mental$self_rated_mental_health)
+str(income_mental)
+```
+
+```{r ggplot}
+income_mental %>% 
+  ggplot(aes(x = self_rated_mental_health)) +
+  geom_bar() + xlab("Self rated mental health") + ylab("Numbers of people") + 
+  ggtitle("Plot on numbers of people who rate their who rate their mental health as different level")
+
+income_mental %>% 
+  ggplot(aes(x = income_family)) +
+  geom_bar() + xlab("Income family") + ylab("Numbers of people") + 
+  ggtitle("Plot on numbers of people who has certain amount of family income")
+```
+
+```{r linear regression model}
+mod <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health), data=income_mental)
+summary(mod)
+plot(mod)
+```
+The model chosen was 
 
 Introduce the selected model here. It is expected that you will use some mathematical notation here. If you do please ensure that all notation is explained. You may also want to discuss any special (hypothetical) cases of your model here, as well as any caveats.  
 
@@ -37,6 +94,8 @@ Here you will include all results. This includes descriptive statistics, graphs,
 Please ensure that everything is well labelled. So if you have multiple histograms and plots, calling them Figure 1, 2, 3, etc. and referencing them as Figure 1, Figure 2, etc. in your report will be expected. The reader should not get lost in a sea of information. Make sure to have the results be clean, well formatted and digestible.
 
 ## Discussion
+
+Methodology: 
 
 Here you will discuss conclusions drawn from the results and comment on how it relates to the original goal of the study (which was specified in the Introduction).
 
@@ -50,6 +109,8 @@ Here you discuss subsequent work to be done after this report. This can include 
 
 
 ## References
+1. Bruin, J. 2006. newtest: command to compute new test.  UCLA:  
+Statistical Consulting Group.  https://stats.idre.ucla.edu/stata/ado/analysis/.
 
 
 
