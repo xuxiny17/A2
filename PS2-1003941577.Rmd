@@ -12,54 +12,75 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Exploration of the Relationship Between Self Rated Mental Health and Family Income
 
 # Xu Xinyi
-# Date
+# 2020/10/18
 
 ## Abstract
 
-The data was from Canadian General Social Survey data done in 2017, I chose to analyze the relation ship between family income and self rated mental health. 
+The data was from Canadian General Social Survey data done in 2017, I chose to analyze the relation ship between family income and self rated mental health and mental health and I expect that there might be a linear relationship between these variables, I suppose that the better the self rated health and mental health the higher the family income might be thus I fitted a simple linear regression model to investigate my hypothesis. However, through analysis, I noticed that the there is a bias that could be brought by age, thus I took age into account. I found that the p-value for the multiple linear regression is over 0.05 and $R^2$ is very small, thus I dropped the variable self rated health and did multiple linear regression models regarding income, self rated mental health and age and income with the other two variables respectively. After analysis, though the most p-values are below 0.05, indicating a significance, the $R^2$ value are all below 0.3, which means that the two variables have a very weak relationship, thus in conclusion, my hypothesis the higher the family income the better the self rated mental health and health does not hold by the analysis of 2017 data.
 
-Here is where you give a brief (one paragraph overview of your entire paper). This should include some background/introduction, some methodology, results and conclusions. 
 
 ## Introduction
 
-The data set collected a lot of information from residents in Canada, and from all these variables, the income and mental health drew my attention as I have heard constantly from media that people tend to feel bad or even commit suicide while experiencing financial hard times. It is likely that financial difficulties could make an individual rather stressful. 
+The data set collected a lot of information from residents in Canada, and from all these variables, the income, mental health and health drew my attention as I have heard constantly from media that people tend to feel bad or even commit suicide while experiencing financial hard times. But would mental health affect income? I was curious and wish to do some investigations.
 
-Thus I would like to analyze the relationship between the family income and self rated mental health. I would use a linear regression model to fit as I expect that the more a family earns, the less likely a the individual would evaluate his/her metal health as poor.
+Thus I would like to analyze the relationship between the family income, self rated mental health and health and through brief analysis, I noticed that the variable age was largely involved in the data, thus I took age into account as well. I would use linear regression model to fit as I expect that the younger the respondent, the higher the individual rate on his/her health and metal health, the more this family might earn.
 
-The result could be important, as if the hypothesis that an less a family earns the more likely an individual is experiencing an mental illness holds, this may allow researchers who study metal health to find their target faster and easier, as well as give government an idea on what proportion of the population they could offer more aid to. 
-
+The result could be important, as if the hypothesis that an less a family earns the more likely an individual is experiencing an illness holds, this may allow researchers who study health related issue to find their target faster and easier, as well as give government an idea on what proportion of the population they could offer more aid to. 
 
 Here is where you should give insight into the setting and introduce the goal of the analysis. Here you can introduce ideas and basic concepts regarding the study setting and the potential model. Again, this is the introduction, so you should be explaining the importance of the work that is ahead and hopefully build some suspense for the reader. You can also highlight what will be included in the subsequent sections.
 
 ## Data
-
-The data I chose is the GSS data set from 2017. The data set is very interesting as it listed 20602 observations and gathered information on the individual's income, self rated health, living conditions, religion affinity and lots of other variables. It involves a lot of interesting factors and information that drives my attention. Some variables like religion affinity, self rated mental health, religion importance and income soon caught my eyes, there are lot that we could dive into and do investigation upon. 
-
-However, for many variables, even at the first glace we could witness that there are lots of data that is NA, which that the analyze done on those variables could be biased as some extreme values or important sets of data could be missing which could be a serious drawback. Except for that, the remaining values are listed out clearly and are all capable for usage. 
-
-Introduce the data, explain why it was selected. Make sure to comment on important features and highlight any potential drawbacks to the data.
-
-## Methodology
-
-
-## Model
 Data was cleaned up following the instruction of the gss_cleaning.R file.
 ```{r import data, echo=TRUE, message=FALSE, warning=FALSE}
 library(janitor)
 library(tidyverse)
 # install.packages("readr")
+# install.packages("rvest")
+library(rvest)
 library(readr)
 
 unprocessed <- read_csv("gss.csv")
 glimpse(unprocessed)
 ```
 
+Quick Age analysis for the data from GSS
+\newline 
+```{r Age Analysis}
+age_data <- 
+  unprocessed %>% 
+  select(age)
+age_data %>% 
+  ggplot(aes(x = age)) +
+  geom_bar() + xlab("Age") + ylab("Numbers of people") + 
+  ggtitle("Figure1 Plot for age")
+```
+The data I chose is the GSS data set from 2017. The data set is very interesting as it listed 20602 observations and gathered information on the individual's income, self rated health, living conditions, religion affinity and lots of other variables. It involves a lot of interesting factors and information that drives my attention. Some variables like religion affinity, self rated mental health, religion importance and income soon caught my eyes, there are lot that we could dive into and do investigation upon. 
+
+However, for many variables, even at the first glace we could witness that there are lots of data that is NA, which that the analyze done on those variables could be biased as some extreme values or important sets of data could be missing which could be a serious drawback. Except for that, the remaining values are listed out clearly and are all capable for usage. 
+
+Besides, from Figure1, we could witness that a large proportion of the data was collected from elderly people who is 80 years old, largely out weigh the people from other ages. This could also be a severe drawback as this would lead to serious bias, as the conclusion we got may not be accurate enough if we do not take the ages into account.
+
+## Methodology
+
+The data was collected by GSS in 2017, and as mentioned in User's Guide (Format pdf) on the GSS website, the data was collected using a new frame which combines the telephone numbers with the Statistics Canada’s Address Register, and eventually collects the data via telephone. 
+
+The \textbf{population} are people who live in Canada, while the \textbf{target population} is mentioned in the Guide: "all non-institutionalized persons 15 years of age and older, living in the 10 provinces of Canada", the \textbf{frame population} is all the people who are non-institutionalized persons 15 years of age and older, living in the 10 provinces of Canada and answered the phone call, the \textbf{sample population} is all the who answered the call completed at least part of the survey. 
+
+The sampling approach they used is probably random sampling, but the trade off could be not every people who they tend to survey would answer the phone or answer all the question they ask. This may be the reason why there a lot more elderly people than the younger ones, as they tend to have more time and patience to answer the phone. The non-response value are left NA in the data set and while we wish to do some analysis we should omit them. The cost could be time conducting the survey as calling each individual one by one is time consuming, and human labor who involved in conducting the survey. 
+
+## Model
+
 ```{r clean and reform data}
 data_reformed <- 
   unprocessed %>% 
-  select(income_family, self_rated_health, self_rated_mental_health)
+  select(income_family, self_rated_health, self_rated_mental_health, age)
 
 data_reformed <- na.omit(data_reformed)
+data_reformed$income_family <- as.factor(data_reformed$income_family)
+data_reformed$self_rated_mental_health <- as.factor(data_reformed$
+                                                      self_rated_mental_health)
+data_reformed$self_rated_health <- as.factor(data_reformed$self_rated_health)
+
 
 income_mental <- 
   unprocessed %>% 
@@ -71,66 +92,154 @@ income_mental$self_rated_mental_health <- as.factor(income_mental$
                                                       self_rated_mental_health)
 str(income_mental)
 ```
+Income ~ Self rated mental health + Self Rated Health + Age
+```{r Linear Regression Model Mod1}
+# Income ~ Self rated mental health + Self Rated Health + Age
+mod1 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health) + as.numeric(self_rated_health) + as.numeric(age), data=data_reformed)
+summary(mod1)
+```
+Income ~ Self rated mental health + Age
+```{r Linear Regression Model Mod2}
+# Income ~ Self rated mental health + Age
+mod2 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health) + as.numeric(age), data=data_reformed)
+summary(mod2)
+```
+Income ~ Age
+```{r Linear Regression Model Mod3}
+# Income ~Age
+mod3 <- lm(as.numeric(income_family) ~ as.numeric(age), data=data_reformed)
+summary(mod3)
+```
+Income ~ Self rated mental health
+```{r Linear Regression Model Mod4}
+# Income ~ Self rated mental health
+mod4 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health), data=income_mental)
+summary(mod4)
+```
+
+```{r Graph Analysis, echo=TRUE, message=FALSE, warning=FALSE}
+attach(income_mental)
+plot(income_family, self_rated_mental_health,
+     main = "Figure2 Plot1 of Self rated mental health against Income family", 
+     xlab = "Income family", ylab = "Self rated mental health")
+
+attach(data_reformed)
+plot(income_family, self_rated_health, 
+     main = "Figure3 Plot2 of Self rated health against Income family", 
+     xlab = "Income family", ylab = "Self rated health")
+
+plot(income_family, age, 
+     main = "Figure4 Plot3 of Age against Income family", 
+     xlab = "Income family", ylab = "Age")
+```
+
+The model I choose was the linear regression model. I fitted hour models here.
+\newline 
+\textbf{Mod 1}
+Income ~ Self rated mental health + Self Rated Health + Age 
+
+$\hat{Income} = 2.89 + 0.013self\_rated\_mental\_health - 0.002self\_rated\_health + 0.009age$
+
+
+
+\textbf{Mod 2}
+Income ~ Self rated mental health + Age 
+
+$\hat{Income} = 2.89 + 0.012self\_rated\_mental\_health - 0.009age$
+
+
+\textbf{Mod 3}
+Income ~ Age 
+
+$\hat{Income} = 2.94 + 0.009age$
+
+
+
+\textbf{Mod 4}
+Income ~ Self rated mental health 
+
+$\hat{Income} = 3.37 + 0.013self\_rated\_mental\_health$
+
+Mod1 we fitted using all three variables, however, the p-value is extremely big, indicating that it is very unlikely for self rated health to be linearly correlated to Income, thus I dropped this variable and fitted another model Mod2 using Income with respect to self rated mental health and age. Mod3 and Mod4 is Income with respect to Self rated mental health and Age respectively to compare their p-value with Mod2.self rated mental health and age
+
+## Results
+
+The first model Mod1 is a multiple linear regression model built to investigate if there is a linear relationship between income and self rated health, self rated mental health and age. From the summary table we could get: $\hat{Income} = 2.89 + 0.013self\_rated\_mental\_health - 0.002self\_rated\_health + 0.009age$, which means that one unit increase in self rated mental health, on average, income would increase $0.013$ unit given all other variables remain the same; one unit increase in self rated health, on average, income would decrease $0.002$ unit given all other variables remain the same; one unit increase in age, on average, income would increase $ 0.009$ unit given all other variables remain the same. 
+
+The standard error of intercept is $0.047$; the standard error of self rated mental health is $0.007$; the standard error of self rated health is $0.008$; while the standard error of age is $0.001$. All the standard error are significant.
+
+However, for the p-value, self rated mental health has a p-value: $0.064$, the p-value for age is approximately $0.000$, the p-values are not very significant, which supports $H_a$ that income has correlation ship with self rated mental health and age. However, the p-value for self rated health is $0.766$, which is significantly larger than 0.05, thus does not support $H_a$, as income is not likely to have a linear correlation ship with self rated health.
+
+I noticed that the $R^2$ value for Mod1 is $0.01169$, which is much smaller than 0.3, thus indicates that the linear relationship between income and the other three variables is very weak.
+
+As the p-value for self rated health is very high, I dropped this variable and fitted other 3 multiple linear regression models: Mod2, Mod3 and Mod4. 
+
+\textbf{For Mod2:} $\hat{Income} = 2.89 + 0.012self\_rated\_mental\_health - 0.009age$. Thus we noticed that one unit increase in self rated mental health, on average, income would increase $0.012$ unit given all other variables remain the same; while one unit increase in age, on average, income would increase $ 0.009$ unit given all other variables remain the same. It is very similar to Mod1.
+
+According to summary table, The standard error of intercept is $0.042$; the standard error of self rated mental health is $ 0.007$; while the standard error of age is $0.001$. Again this is almost the same as Mod1 and is not significant as well.
+
+The p-value for self rated mental health is $0.06$ and the the p-value for age is again approximately $0.000$. Though for self rated mental health is greater than $0.05$, in Mod4 the p-value for it is below $0.05$, thus I tend to conclude that it supports $H_a$ that income has correlation ship with self rated mental health and age.
+
+However, the $R^2$ for all Mods are less than 0.3, indicating that there is very weak linear relationship between income and self rated mental health and age as a whole and respectively as well.
+
+From Figure 2, 3, 4 we could clearly witness that the income does not vary a lot as self rated mental health, self rated health and age changes. 
+
+## Discussion
+
+According to the result section, though the p-values for age and self rated mental health is low, the $R^2$ value for all four models are extremely low, which indicates that income does not have a linear relationship with self rated mental health, self rated health and age.Thus my hypothesis: the younger the respondent, the higher the individual rate on his/her health and metal health, the more this family might earn does not hold. Thus it is likely that income is not linearly correlated to self rated mental health, self rated health and age changes. This study shows that at least from the GSS 2017 data family income is not likely to be linearly affected by age self rated health and mental health, and could not act as an indicator or government to predict what population they could offer more help to. 
+
+# Weaknesses
+
+The data has some serious drawbacks, like I have discussed in Methodology section, a considerably amount of data was collected from elderly in their 80s, largely outweigh other ages. This could lead to bias and eventually result inaccuracy. 
+
+The study could address more factors, or fit another kind of model if linear regression model does not hold. Besides, during analysis, the p-value of self rated mental health in Mod1, 2 are all above 0.05, while in Mod4 it is below 0.05, the deviation might due to the addition of age to the model, but these two variable may be the main contributors leading to income changes from this study's perspective. 
+
+There are lots that could get improved, I could randomly pick some data from the section of people at age 80, this may make the analysis clearer and more accurate and could omit some serious age bias. 
+
+# Next Steps
+
+The linear regression model does not fit for the four variables that I have made investigation on, I wish to explore regarding income, and maybe we could fit another model like exponential and do some investigations. Besides that I should try to pick some data of from the 80 year old section and redo the linear regression model to if there is any differences to omit the severe bias caused by the people at age 80 largely outweigh other sections. 
+
+Being interested in income related issue, future steps could be we do a cluster sampling and pick 2 or 3 hospitals around the 10 provinces in Canada, and if the patients agree, we could collect the data from them, we could check if people who go to the hospital are usually people who have income above a certain level or do they have insurance covered, as I have heard people complaining about the high treatment fee in hospital.
+
+## References
+1. Bruin, J. 2006. newtest: command to compute new test.  UCLA:  
+Statistical Consulting Group.  https://stats.idre.ucla.edu/stata/ado/analysis/.
+2. https://stackoverflow.com/questions/32400916/convert-html-tables-to-r-data-frame
+
+## Appendix
+Github link: https://github.com/xuxiny17/A2.git
 
 ```{r ggplot}
 income_mental %>% 
   ggplot(aes(x = self_rated_mental_health)) +
   geom_bar() + xlab("Self rated mental health") + ylab("Numbers of people") + 
-  ggtitle("Plot on numbers of people who rate their who rate their mental 
-          health as different level")
+  ggtitle("Figure4 Plot on self rated mental health")
 
 income_mental %>% 
   ggplot(aes(x = income_family)) +
   geom_bar() + xlab("Income family") + ylab("Numbers of people") + 
-  ggtitle("Plot on numbers of people who has certain amount of family income") +
+  ggtitle("Figure5 Plot on numbers of people with different family income") +
   coord_flip()
 ```
 
-```{r Linear Regression Model}
-mod <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health), data=income_mental)
-summary(mod)
-plot(mod)
-```
-```{r Graph Analysis, echo=TRUE, message=FALSE, warning=FALSE}
-attach(income_mental)
-plot(income_family, self_rated_mental_health, 
-     main = "Plot of Self rated mental health against Income family", 
-     xlab = "Self rated mental health", ylab = "Income family")
+```{r model plot}
+par(mfrow=c(2,2))
+plot(mod1)
 
+par(mfrow=c(2,2))
+plot(mod2)
+
+par(mfrow=c(2,2))
+plot(mod3)
+
+par(mfrow=c(2,2))
+plot(mod4)
+```
+
+```{r Scatter plot}
 plot(as.numeric(income_family), as.numeric(self_rated_mental_health), 
-     main = "Plot of Self rated mental health against Income family", 
+     main = "Figure5 Plot4 of Self rated mental health against Income family", 
      xlab = "Self rated mental health", ylab = "Income family")
 abline(lm(income_family~self_rated_mental_health), col="red")
 ```
-
-The model I choose was the simple linear regression model. 
-
-Introduce the selected model here. It is expected that you will use some mathematical notation here. If you do please ensure that all notation is explained. You may also want to discuss any special (hypothetical) cases of your model here, as well as any caveats.  
-
-## Results
-
-Here you will include all results. This includes descriptive statistics, graphs, figures, tables, and model results. Please ensure that everything is well formatted and in a report style. You must also provide an explanation of the results in this section. You can overflow to an Appendix if needed. 
-
-Please ensure that everything is well labelled. So if you have multiple histograms and plots, calling them Figure 1, 2, 3, etc. and referencing them as Figure 1, Figure 2, etc. in your report will be expected. The reader should not get lost in a sea of information. Make sure to have the results be clean, well formatted and digestible.
-
-## Discussion
-
-Methodology: 
-
-Here you will discuss conclusions drawn from the results and comment on how it relates to the original goal of the study (which was specified in the Introduction).
-
-# Weaknesses
-
-Here we discuss weaknesses of the study, data, analysis, etc. You can also discuss areas for improvement.
-
-# Next Steps
-
-Here you discuss subsequent work to be done after this report. This can include next steps in terms of statistical analysis (perhaps there is a more efficient algorithm available, or perhaps there is a caveat in the data that would allow for some new technique). Future steps should also be specified in terms of the study setting (eg. including a follow-up survey on something, or a subsequent study that would complement the conclusions of your report).
-
-
-## References
-1. Bruin, J. 2006. newtest: command to compute new test.  UCLA:  
-Statistical Consulting Group.  https://stats.idre.ucla.edu/stata/ado/analysis/.
-
-
-
