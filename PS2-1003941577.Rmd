@@ -1,5 +1,5 @@
 ---
-title: "Exploration of the Relationship Between Self Rated Mental Health and Family Income"
+title: "Exploration if There is a Linear Between Self Rated Health, Mental Health, Age and Family Income"
 author: "Xu Xinyi"
 date: "2020/10/18"
 output: pdf_document
@@ -9,10 +9,11 @@ output: pdf_document
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Exploration of the Relationship Between Self Rated Mental Health and Family Income
+## Exploration if There is a Linear Between Self Rated Health, Mental Health, Age and Family Income
 
 # Xu Xinyi
 # 2020/10/18
+Code and data supporting this analysis is available at: https://github.com/xuxiny17/A2.git
 
 ## Abstract
 
@@ -206,6 +207,8 @@ Being interested in income related issue, future steps could be we do a cluster 
 1. Bruin, J. 2006. newtest: command to compute new test.  UCLA:  
 Statistical Consulting Group.  https://stats.idre.ucla.edu/stata/ado/analysis/.
 2. https://stackoverflow.com/questions/32400916/convert-html-tables-to-r-data-frame
+3.https://sda-artsci-utoronto-ca.myaccess.library.utoronto.ca/cgi-bin/sda/hsda?harcsda4+gss31
+
 
 ## Appendix
 Github link: https://github.com/xuxiny17/A2.git
