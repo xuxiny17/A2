@@ -32,7 +32,7 @@ Here is where you should give insight into the setting and introduce the goal of
 
 ## Data
 Data was cleaned up following the instruction of the gss_cleaning.R file.
-```{r import data, echo=TRUE, message=FALSE, warning=FALSE}
+```{r import data, echo=FALSE, message=FALSE, warning=FALSE}
 library(janitor)
 library(tidyverse)
 # install.packages("readr")
@@ -46,7 +46,7 @@ glimpse(unprocessed)
 
 Quick Age analysis for the data from GSS
 \newline 
-```{r Age Analysis}
+```{r Age Analysis, echo=FALSE}
 age_data <- 
   unprocessed %>% 
   select(age)
@@ -71,7 +71,7 @@ The sampling approach they used is probably random sampling, but the trade off c
 
 ## Model
 
-```{r clean and reform data}
+```{r clean and reform data, echo=FALSE}
 data_reformed <- 
   unprocessed %>% 
   select(income_family, self_rated_health, self_rated_mental_health, age)
@@ -93,32 +93,32 @@ income_mental$self_rated_mental_health <- as.factor(income_mental$
                                                       self_rated_mental_health)
 str(income_mental)
 ```
-Income ~ Self rated mental health + Self Rated Health + Age
-```{r Linear Regression Model Mod1}
+\textbf{Income ~ Self rated mental health + Self Rated Health + Age}
+```{r Linear Regression Model Mod1, echo=FALSE}
 # Income ~ Self rated mental health + Self Rated Health + Age
 mod1 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health) + as.numeric(self_rated_health) + as.numeric(age), data=data_reformed)
 summary(mod1)
 ```
-Income ~ Self rated mental health + Age
-```{r Linear Regression Model Mod2}
+\textbf{Income ~ Self rated mental health + Age}
+```{r Linear Regression Model Mod2, echo=FALSE}
 # Income ~ Self rated mental health + Age
 mod2 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health) + as.numeric(age), data=data_reformed)
 summary(mod2)
 ```
-Income ~ Age
-```{r Linear Regression Model Mod3}
+\textbf{Income ~ Age}
+```{r Linear Regression Model Mod3, echo=FALSE}
 # Income ~Age
 mod3 <- lm(as.numeric(income_family) ~ as.numeric(age), data=data_reformed)
 summary(mod3)
 ```
-Income ~ Self rated mental health
-```{r Linear Regression Model Mod4}
+\textbf{Income ~ Self rated mental health}
+```{r Linear Regression Model Mod4, echo=FALSE}
 # Income ~ Self rated mental health
 mod4 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health), data=income_mental)
 summary(mod4)
 ```
 
-```{r Graph Analysis, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Graph Analysis, echo=FALSE, message=FALSE, warning=FALSE}
 attach(income_mental)
 plot(income_family, self_rated_mental_health,
      main = "Figure2 Plot1 of Self rated mental health against Income family", 
@@ -213,7 +213,7 @@ Statistical Consulting Group.  https://stats.idre.ucla.edu/stata/ado/analysis/.
 ## Appendix
 Github link: https://github.com/xuxiny17/A2.git
 
-```{r ggplot}
+```{r ggplot, echo=FALSE}
 income_mental %>% 
   ggplot(aes(x = self_rated_mental_health)) +
   geom_bar() + xlab("Self rated mental health") + ylab("Numbers of people") + 
@@ -226,7 +226,7 @@ income_mental %>%
   coord_flip()
 ```
 
-```{r model plot}
+```{r model plot, echo=FALSE}
 par(mfrow=c(2,2))
 plot(mod1)
 
@@ -240,7 +240,7 @@ par(mfrow=c(2,2))
 plot(mod4)
 ```
 
-```{r Scatter plot}
+```{r Scatter plot, echo=FALSE}
 plot(as.numeric(income_family), as.numeric(self_rated_mental_health), 
      main = "Figure5 Plot4 of Self rated mental health against Income family", 
      xlab = "Self rated mental health", ylab = "Income family")
