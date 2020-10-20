@@ -43,6 +43,7 @@ library(readr)
 unprocessed <- read_csv("gss.csv")
 glimpse(unprocessed)
 ```
+\newpage
 
 Quick Age analysis for the data from GSS
 \newline 
@@ -70,7 +71,7 @@ The \textbf{population} are people who live in Canada, while the \textbf{target 
 The sampling approach they used is probably random sampling, but the trade off could be not every people who they tend to survey would answer the phone or answer all the question they ask. This may be the reason why there a lot more elderly people than the younger ones, as they tend to have more time and patience to answer the phone. The non-response value are left NA in the data set and while we wish to do some analysis we should omit them. The cost could be time conducting the survey as calling each individual one by one is time consuming, and human labor who involved in conducting the survey. 
 
 ## Model
-
+We first create data set based on the gss.csv that we cleaned up in Data section.
 ```{r clean and reform data, echo=FALSE}
 data_reformed <- 
   unprocessed %>% 
@@ -82,6 +83,13 @@ data_reformed$self_rated_mental_health <- as.factor(data_reformed$
                                                       self_rated_mental_health)
 data_reformed$self_rated_health <- as.factor(data_reformed$self_rated_health)
 
+write_csv(data_reformed, "data_reformed.csv")
+
+income_age <- 
+  unprocessed %>% 
+  select(income_family, age)
+income_age <- na.omit(income_age)
+income_age$income_family <- as.factor(income_age$income_family)
 
 income_mental <- 
   unprocessed %>% 
@@ -91,27 +99,34 @@ income_mental <- na.omit(income_mental)
 income_mental$income_family <- as.factor(income_mental$income_family)
 income_mental$self_rated_mental_health <- as.factor(income_mental$
                                                       self_rated_mental_health)
-str(income_mental)
 ```
-\textbf{Income ~ Self rated mental health + Self Rated Health + Age}
+Income ~ Self rated mental health + Self Rated Health + Age
+
+
 ```{r Linear Regression Model Mod1, echo=FALSE}
 # Income ~ Self rated mental health + Self Rated Health + Age
 mod1 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health) + as.numeric(self_rated_health) + as.numeric(age), data=data_reformed)
 summary(mod1)
 ```
-\textbf{Income ~ Self rated mental health + Age}
+Income ~ Self rated mental health + Age
+
+
 ```{r Linear Regression Model Mod2, echo=FALSE}
 # Income ~ Self rated mental health + Age
 mod2 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health) + as.numeric(age), data=data_reformed)
 summary(mod2)
 ```
-\textbf{Income ~ Age}
+Income ~ Age
+
+
 ```{r Linear Regression Model Mod3, echo=FALSE}
 # Income ~Age
-mod3 <- lm(as.numeric(income_family) ~ as.numeric(age), data=data_reformed)
+mod3 <- lm(as.numeric(income_family) ~ as.numeric(age), data=income_age)
 summary(mod3)
 ```
-\textbf{Income ~ Self rated mental health}
+Income ~ Self rated mental health
+
+
 ```{r Linear Regression Model Mod4, echo=FALSE}
 # Income ~ Self rated mental health
 mod4 <- lm(as.numeric(income_family) ~ as.numeric(self_rated_mental_health), data=income_mental)
